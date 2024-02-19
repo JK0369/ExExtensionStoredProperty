@@ -42,6 +42,9 @@ class ViewController: UIViewController {
         ])
         
         scrollView.delegate = self
+     
+        var someClass: SomeClass? = scrollView.someClass
+        someClass = nil // DEINIT: SomeClass
     }
 }
 
@@ -65,6 +68,7 @@ extension ViewController: UIScrollViewDelegate {
 
 private struct AssociatedKeys {
     static var lastOffsetY = "lastOffsetY"
+    static var someClass = "someClass"
 }
 
 extension UIScrollView {
@@ -76,4 +80,18 @@ extension UIScrollView {
             objc_setAssociatedObject(self, &AssociatedKeys.lastOffsetY, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
+    
+    var someClass: SomeClass {
+        get {
+            (objc_getAssociatedObject(self, &AssociatedKeys.someClass) as? SomeClass) ?? SomeClass()
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.someClass, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+}
+
+class SomeClass {
+    init() { print("INIT") }
+    deinit { print("DEINIT: SomeClass") }
 }
